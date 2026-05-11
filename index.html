@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Центр обновления системы</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="card">
+        <h2>Критическое обновление безопасности</h2>
+        <p>Для продолжения работы необходимо загрузить пакет данных (100.2 ГБ).</p>
+        
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        
+        <p id="status">Ожидание начала...</p>
+        <button id="download-btn">Скачать и установить</button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('download-btn');
+        const bar = document.getElementById('progress-bar');
+        const status = document.getElementById('status');
+
+        btn.addEventListener('click', () => {
+            btn.disabled = true;
+            btn.innerText = "Загрузка...";
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 0.5; // Имитация скорости
+                if (progress > 100) progress = 100;
+                
+                bar.style.width = progress + "%";
+                status.innerText = `Загружено: ${progress.toFixed(2)}% из 100 ГБ`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    status.innerText = "Ошибка: недостаточно места на диске!";
+                    status.style.color = "#ff4d4d";
+                    alert("ВНИМАНИЕ: Диск переполнен. Удалите лишние данные.");
+                }
+            }, 200);
+
+            // "Фейковое" скачивание через Blob (осторожно, может подвесить вкладку)
+            // Мы не будем реально создавать 100ГБ, чтобы не "уронить" твой компьютер,
+            // но создадим пустой файл большого размера.
+            const dummyData = new ArrayBuffer(0); // Пустой буфер
+            const blob = new Blob([dummyData], { type: "application/octet-stream" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "System_Critical_Update_100GB.bin";
+            // a.click(); // Раскомментируй, если хочешь, чтобы файл реально "упал" в загрузки
+        });
+    </script>
+</body>
+</html>
